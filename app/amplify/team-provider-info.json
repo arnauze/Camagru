@@ -1,0 +1,14 @@
+{
+    "dev": {
+        "awscloudformation": {
+            "AuthRoleName": "camagru-dev-20190911153620-authRole",
+            "UnauthRoleArn": "arn:aws:iam::376675122714:role/camagru-dev-20190911153620-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::376675122714:role/camagru-dev-20190911153620-authRole",
+            "Region": "us-west-2",
+            "DeploymentBucketName": "camagru-dev-20190911153620-deployment",
+            "UnauthRoleName": "camagru-dev-20190911153620-unauthRole",
+            "StackName": "camagru-dev-20190911153620",
+            "StackId": "arn:aws:cloudformation:us-west-2:376675122714:stack/camagru-dev-20190911153620/93a0c610-d4e4-11e9-ac34-02e34c33f014"
+        }
+    }
+}
