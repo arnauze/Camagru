@@ -20,43 +20,64 @@ class Connection extends React.Component {
         },
         confirmationMessage: '',
         confirmationCode: '',
-        errorMessage: ''
+        errorMessage: '',
+        errorLogin: ''
 
     }
 
     _onSubmitSignIn = e => {
 
-        // Function called when I sumbit the form
+        // Function called when I sumbit the signIn form
 
         e.preventDefault()  // Function to prevent the page from updating  
+
+        // Here I use AWS Cognito to handle the user authentication
 
        Auth.signIn(this.state.signIn.username, this.state.signIn.password)
        .then(data => {
 
             console.log("Successfully called the Auth API:", data)
 
-            let action = {
-                type: 'CONNECT_USER',
-                value: {
-                    user: {
-                        username: this.state.signIn.username
+            // If the user successfully signed in then I change the user variable in the global state
+            // Then I change the page variable in the global state
+
+            let apiName = 'Camagru'
+            let path = '/users/' + data.username
+            let myInit = {}
+
+            API.get(apiName, path, myInit)
+            .then(data => {
+
+                let action = {
+                    type: 'CONNECT_USER',
+                    value: {
+                        user: data
                     }
                 }
-            }
-            this.props.dispatch(action)
+                this.props.dispatch(action)
 
-            action = {
-                type: 'CHANGE_PAGE',
-                value: {
-                    page: "PROFILE"
+                action = {
+                    type: 'CHANGE_PAGE',
+                    value: {
+                        page: "ADD_PHOTO"
+                    }
                 }
-            }
-            this.props.dispatch(action)
+                this.props.dispatch(action)
+
+            })
+            .catch(err => {
+                console.log(err)
+            })
 
        })
        .catch(error => {
 
             console.log("Error calling the Auth API:", error)
+
+            this.setState({
+                ...this.state,
+                errorLogin: error.message
+            })
 
        })
 
@@ -68,6 +89,8 @@ class Connection extends React.Component {
 
         e.preventDefault()  // Function to prevent the page from updating  
 
+        // Using AWS Cognito
+
         Auth.signUp({
             username: this.state.signUp.username,
             password: this.state.signUp.password,
@@ -76,6 +99,8 @@ class Connection extends React.Component {
             }
         })
         .then(data => {
+
+            // If the user signed up I output the message and form to confirm his email address
 
             console.log("Successfully created a new user:", data)
 
@@ -87,6 +112,8 @@ class Connection extends React.Component {
         })
         .catch(err => {
             
+            // If the user couldn't sign up I output an error message explaining why it didn't work
+
             console.log(err)
 
             this.setState({
@@ -160,6 +187,8 @@ class Connection extends React.Component {
 
     _onSubmitConfirmationCode = (e) => {
 
+        // Function called when the user submits the confirmation code
+
         e.preventDefault()
 
         Auth.confirmSignUp(this.state.signUp.username, this.state.confirmationCode)
@@ -167,14 +196,8 @@ class Connection extends React.Component {
             
             console.log("Successfully confirmed the user in Cognito:", data)
 
-            this.setState({
-                ...this.state,
-                signUp: {
-                    username: '',
-                    password: '',
-                    email: ''
-                }
-            })
+            // If the confirmation worked, I clean the fields for the sign up form
+            // Then I call my API to add the newly created user in my database
 
             let apiName = 'Camagru'
             let path = '/users'
@@ -195,6 +218,21 @@ class Connection extends React.Component {
 
                 console.log("Error calling the API:", error)
 
+            })
+
+            this.setState({
+                ...this.state,
+                signUp: {
+                    username: '',
+                    password: '',
+                    email: ''
+                },
+                signIn: {
+                    username: this.state.signUp.username,
+                    password: this.state.signUp.password
+                },
+                confirmationCode: '',
+                confirmationMessage: ''
             })
 
         })
@@ -229,6 +267,7 @@ class Connection extends React.Component {
                 onChangeUsername={this._onChangeSignInUsername}
                 onChangeEmail={this._onChangeSignInEmail}
                 onChangePassword={this._onChangeSignInPassword}
+                errorMessage={this.state.errorLogin}
                 />
                 <SignUp
                 onSubmitSignUp={this._onSubmitSignUp}

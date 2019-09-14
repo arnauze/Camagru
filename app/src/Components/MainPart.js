@@ -15,7 +15,9 @@ class MainPart extends React.Component {
         if (this.props.page === 'MAIN_PAGE') {
 
             return (
-                <MainPage />
+                <center>
+                    <MainPage />
+                </center>
             )
 
         } else if (this.props.page === 'ADD_PHOTO') {
@@ -27,13 +29,17 @@ class MainPart extends React.Component {
         } else if (this.props.page === 'CONNECTION') {
 
             return (
-                <Connection />
+                <center>
+                    <Connection />
+                </center>
             )
 
         } else if (this.props.page === 'PROFILE') {
 
             return (
-                <Profile />
+                <center>
+                    <Profile />
+                </center>
             )
 
         }

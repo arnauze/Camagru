@@ -98,6 +98,7 @@ const styles = {
         height: '10vh',
         marginBottom: 10,
         flexDirection: 'row',
+        border: '1px solid black'
     },
     button: {
         width: '15vw',

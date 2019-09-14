@@ -2,13 +2,13 @@ import React from 'react'
 import TopBar from './TopBar'
 import { connect } from 'react-redux'
 import MainPart from './MainPart'
-import Amplify from 'aws-amplify'
+import Amplify, { Auth, API } from 'aws-amplify'
 
 Amplify.configure({
     Auth: {
         region: 'us-east-2',
-        userPoolId: 'us-east-2_La0GCAXYb',
-        userPoolWebClientId: '38kr0s2m1umpqc670mul0sbfat'
+        userPoolId: 'us-east-2_VgkxVtNIq',
+        userPoolWebClientId: '6oe8l0f5sarangjassslpj61bl'
     },
     API: {
         endpoints: [
@@ -17,6 +17,11 @@ Amplify.configure({
                 endpoint: "https://qffrfbpwie.execute-api.us-east-2.amazonaws.com/dev"
             }
         ]
+    },
+    Storage: {
+        AWSS3: {
+            bucket: 'camagru-dev', //REQUIRED -  Amazon S3 bucket
+        }
     }
 })
 
@@ -24,15 +29,49 @@ class MainPage extends React.Component {
 
     // React component for the website
 
+    componentWillMount() {
+
+        Auth.currentAuthenticatedUser()
+        .then(user => {
+
+            let apiName = 'Camagru'
+            let path = '/users/' + user.username
+            let myInit = {}
+
+            API.get(apiName, path, myInit)
+            .then(data => {
+
+                console.log("Successfully called the API:", data)
+
+                let action = {
+                    type: 'CONNECT_USER',
+                    value: {
+                        user: data
+                    }
+                }
+                this.props.dispatch(action)
+
+            })
+            .catch(err => {
+                console.log(err.message)
+            })
+
+        })
+        .catch(err => {
+
+            console.log(err)
+
+        })
+
+    }
+
     render() {
 
         return (
 
             <React.Fragment>
-                <center>
-                    <TopBar />
-                    <MainPart />
-                </center>
+                <TopBar />
+                <MainPart />
             </React.Fragment>
             
         )

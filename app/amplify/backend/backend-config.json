@@ -1,1 +1,15 @@
-{}
+{
+	"auth": {
+		"camagru2b7dd2ff": {
+			"service": "Cognito",
+			"providerPlugin": "awscloudformation",
+			"dependsOn": []
+		}
+	},
+	"storage": {
+		"s39195b311": {
+			"service": "S3",
+			"providerPlugin": "awscloudformation"
+		}
+	}
+}

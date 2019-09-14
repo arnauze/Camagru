@@ -49,6 +49,17 @@ export default class SignIn extends React.Component {
                     <br />
                     <input type="submit" value="Sign in"/>
                 </form>
+                {
+                    this.props.errorMessage.length > 0
+                    ?
+                        <h5
+                        style={{color: 'red'}}
+                        >
+                            {this.props.errorMessage}
+                        </h5>
+                    :
+                        null
+                }
             </div>
 
         )
