@@ -13,14 +13,15 @@ export default class MainPage extends React.Component {
 
     componentDidMount() {
 
+        // Function called when the component finished mounting
+        // I call my API to get all the posts
+
         let apiName = 'Camagru'
         let path = '/posts'
         let myInit = {}
 
         API.get(apiName, path, myInit)
         .then(data => {
-
-            console.log("Success", data)
 
             this.setState({
                 ...this.state,
@@ -36,6 +37,8 @@ export default class MainPage extends React.Component {
     }
 
     _onDeletePost = post => {
+
+        // Function called when I delete a post
 
         this.setState({
             ...this.state,

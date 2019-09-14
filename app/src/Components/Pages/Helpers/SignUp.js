@@ -2,8 +2,7 @@ import React from 'react'
 
 export default class SignUp extends React.Component {
 
-    // React Component for the Connection page
-    // This is the signUp form
+    // React Component for the Sign Up part of the connection page
 
     _outputBottomPart = () => {
 

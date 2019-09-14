@@ -2,6 +2,9 @@ import React from 'react'
 
 export default class SignIn extends React.Component {
 
+    // React Component for the Sign In part of the Connection page
+    // All of the logic from the text input and the form submit are in the parent Component (Connection)
+
     render() {
 
         return (
@@ -42,9 +45,9 @@ export default class SignIn extends React.Component {
                     <br />
                     <h6
                     style={{color: 'blue', fontWeight: 'normal', marginTop: 5, marginBottom: 0}}
-                    onClick={() => alert("Hello")}
+                    onClick={() => alert("Forgot password")}
                     >   
-                        Mot de passe oublié ?
+                        Forgot password ?
                     </h6>
                     <br />
                     <input type="submit" value="Sign in"/>

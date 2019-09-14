@@ -127,6 +127,8 @@ class Connection extends React.Component {
 
     _onChangeSignUpEmail = text => {
 
+        // Function called when I change the input text for email in the Sign Up component
+
         this.setState({
             ...this.state,
             signUp: {
@@ -138,6 +140,8 @@ class Connection extends React.Component {
     }
 
     _onChangeSignUpPassword = text => {
+
+        // Function called when I change the input text for password in the Sign Up component
 
         this.setState({
             ...this.state,
@@ -151,6 +155,8 @@ class Connection extends React.Component {
 
     _onChangeSignUpUsername = text => {
 
+        // Function called when I change the input text for username in the Sign Up component
+
         this.setState({
             ...this.state,
             signUp: {
@@ -163,6 +169,8 @@ class Connection extends React.Component {
 
     _onChangeSignInPassword = text => {
 
+        // Function called when I change the input text for password in the Sign In component
+
         this.setState({
             ...this.state,
             signIn: {
@@ -174,6 +182,8 @@ class Connection extends React.Component {
     }
 
     _onChangeSignInUsername = text => {
+
+        // Function called when I change the input text for username in the Sign In component
 
         this.setState({
             ...this.state,
@@ -246,6 +256,8 @@ class Connection extends React.Component {
 
     _onChangeConfirmationCode = (text) => {
 
+        // Function called when I change the input text for confirmation_code in the Sign Up component
+
         this.setState({
             ...this.state,
             confirmationCode: text
@@ -254,8 +266,6 @@ class Connection extends React.Component {
     }
 
     render() {
-
-        console.log("Connection state:", this.state)
 
         return (
             <div

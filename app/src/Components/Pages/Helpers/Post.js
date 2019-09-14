@@ -4,7 +4,12 @@ import { API } from 'aws-amplify'
 
 class Post extends React.Component {
 
+    // React Component for a post item
+
     _onDeleteButtonClicked = () => {
+
+        // If the user connected clicks on the delete button for his post
+        // I call my API and delete the post from the database
 
         let apiName = 'Camagru'
         let path = '/posts/' + this.props.post.id
@@ -25,7 +30,6 @@ class Post extends React.Component {
 
     render() {
 
-        console.log(this.props)
         var photo = this.props.post.photo
 
         return (

@@ -8,9 +8,11 @@ import Profile from './Pages/Profile'
 class MainPart extends React.Component {
 
     // React Component for the main part of the website
-    // Here I output the pages based on the global state value page
 
     _outputPage = () => {
+
+        // Function called in the render
+        // I output the necessary component based on the global state value page
 
         if (this.props.page === 'MAIN_PAGE') {
 
@@ -37,9 +39,7 @@ class MainPart extends React.Component {
         } else if (this.props.page === 'PROFILE') {
 
             return (
-                <center>
-                    <Profile />
-                </center>
+                <Profile />
             )
 
         }
@@ -47,8 +47,6 @@ class MainPart extends React.Component {
     }
 
     render() {
-
-        console.log(this.state)
 
         return (
                 this._outputPage()

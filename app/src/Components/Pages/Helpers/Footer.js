@@ -1,11 +1,13 @@
 import React from 'react'
-import { stickers } from '../../../Constants'
+import { stickers } from '../../../Constants' // I saved the stickers informations in a file at the root of the app directory
 
 export default class Footer extends React.Component {
 
-    render() {
+    // React component for the footer on the page Add photo
+    // In this component I output all the stickers that a user can add on a picture
+    // If I click on one of the sticker I call a function transfered by the parent component
 
-        console.log(stickers)
+    render() {
 
         return (
             <div style={{width: '100%', height: '23vh', border: '1px solid black', margin: 5, display: 'flex', alignItems: 'center'}}>

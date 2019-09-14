@@ -31,6 +31,10 @@ class MainPage extends React.Component {
 
     componentWillMount() {
 
+        // Function called when the component is created
+        // I check if a user is already connected using AWS Cognito
+        // If a user is connected then I update the global state
+
         Auth.currentAuthenticatedUser()
         .then(user => {
 
