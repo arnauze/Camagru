@@ -10,7 +10,7 @@ export default class Footer extends React.Component {
     render() {
 
         return (
-            <div style={{width: '100%', height: '23vh', border: '1px solid black', margin: 5, display: 'flex', alignItems: 'center'}}>
+            <div style={{width: '90%', height: '23vh', border: '1px solid black', margin: 5, display: 'flex', alignItems: 'center', overflowX: 'scroll'}}>
                 {
                     stickers.map((item, index) => {
 
@@ -24,12 +24,12 @@ export default class Footer extends React.Component {
                                     onClick={() => this.props.onClick(
                                         {
                                             ...item,
-                                            width: (this.props.screenDimensions.width / 10) * item.width,
+                                            width: (this.props.screenDimensions.width / 13) * item.width,
                                             height: (this.props.screenDimensions.height / 10) * item.height
                                         }
                                     )}
                                     src={item.url}
-                                    style={{width: (this.props.screenDimensions.width / 10) * item.width, height: (this.props.screenDimensions.height / 10) * item.height}}
+                                    style={{width: (this.props.screenDimensions.width / 13) * item.width, height: (this.props.screenDimensions.height / 10) * item.height}}
                                     alt=''/>
                                 </center>
                             </div>

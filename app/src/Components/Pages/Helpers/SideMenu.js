@@ -10,7 +10,7 @@ export default class SideMenu extends React.Component {
 
         return (
             <div
-            style={{width: '23vw', height: '60vh', border: '1px solid black', display: 'flex', justifyContent: 'center'}}
+            style={{width: '23vw', height: '60vh', overflowY: 'scroll', border: '1px solid black', display: 'flex', justifyContent: 'center'}}
             >
                 {
                     this.props.loading

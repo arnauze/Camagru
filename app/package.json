@@ -3,11 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@material-ui/core": "^4.4.2",
     "amplify-cli": "^1.0.0",
     "aws-amplify": "^1.1.38",
     "aws-sdk": "^2.528.0",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
+    "react-draggable": "^4.0.3",
     "react-redux": "^7.1.1",
     "react-scripts": "3.1.1",
     "react-switch": "^5.0.1",

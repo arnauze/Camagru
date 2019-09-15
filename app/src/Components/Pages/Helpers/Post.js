@@ -1,6 +1,8 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { API } from 'aws-amplify'
+import Photo from './Photo'
+import SocialBar from './SocialBar'
 
 class Post extends React.Component {
 
@@ -31,51 +33,23 @@ class Post extends React.Component {
     render() {
 
         var photo = this.props.post.photo
+        var sticker = this.props.post.sticker
 
         return (
             <div
-            style={{margin: 10, backgroundColor: 'white', width: '75vw'}}
+            style={{margin: 10, backgroundColor: 'white'}}
             >
-                <div
-                style={{display: 'flex', alignItems: 'top', justifyContent: 'center', position: 'relative'}}
-                >
-                    <img
-                    alt=''
-                    src={photo.path}
-                    style={{maxWidth: photo.width, maxHeight: photo.height, width: '75vw'}}
-                    />
-                    {
-                        this.props.user.info.username === this.props.post.creator
-                        ?
-                            <img
-                            onClick={this._onDeleteButtonClicked}
-                            src={require('../../../Images/deleteButton.png')}
-                            style={{width: '3vw', height: '3vh', maxWidth: 40, maxHeight: 40, minHeight: 10, minWidth: 10, position: 'absolute', bottom: 0}}
-                            alt=''
-                            />
-                        :
-                            null
-                    }
-                </div>
-                <div
-                style={{height: 100, display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly'}}
-                >
-                    <div
-                    >
-                        <center>
-                            <h4>
-                                LIKE
-                            </h4>
-                        </center>
-                    </div>
-                    <div>
-                        <center>
-                            <h4>
-                                COMMENT
-                            </h4>
-                        </center>
-                    </div>
-                </div>
+                <Photo
+                photo={photo}
+                sticker={sticker}
+                user={this.props.user}
+                post={this.props.post}
+                onDeleteButtonClicked={this._onDeleteButtonClicked}
+                />
+                <SocialBar
+                reload={this.props.reload}
+                post={this.props.post}
+                />
             </div>
         )
 

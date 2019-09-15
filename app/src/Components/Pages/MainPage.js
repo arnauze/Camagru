@@ -11,9 +11,8 @@ export default class MainPage extends React.Component {
         posts: []
     }
 
-    componentDidMount() {
+    _getPosts = () => {
 
-        // Function called when the component finished mounting
         // I call my API to get all the posts
 
         let apiName = 'Camagru'
@@ -47,30 +46,40 @@ export default class MainPage extends React.Component {
 
     }
 
+    _reload = () => {
+
+        this.setState({
+            ...this.state,
+            loading: true
+        })
+
+    }
+
     render() {
+
+        if (this.state.loading) {
+            this._getPosts()
+        }
 
         return (
             <div style={styles.main_container}>
                 {
-                    !this.state.loading
+                    this.state.posts.length > 0
                     ?
-                        this.state.posts.length > 0
-                        ?
-                            this.state.posts.map((item, index) => {
+                        this.state.posts.map((item, index) => {
 
-                                return (
-                                    <Post
-                                    key={index}
-                                    post={item}
-                                    deletePost={this._onDeletePost}
-                                    />
-                                )
+                            return (
+                                <Post
+                                key={index}
+                                post={item}
+                                deletePost={this._onDeletePost}
+                                reload={this._reload}
+                                />
+                            )
 
-                            })
-                        :
-                            <p>There is no post to show for now. Add one by clicking on Add a picture</p>
+                        })
                     :
-                        <p>Loading ...</p>
+                        this.state.loading ? null : <p>There is no post to show for now. Add one by clicking on Add a picture</p>
                 }
             </div>
         )

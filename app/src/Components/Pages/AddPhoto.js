@@ -5,6 +5,7 @@ import Webcam from "react-webcam"
 import Footer from './Helpers/Footer'
 import SideMenu from './Helpers/SideMenu'
 import Switch from "react-switch"
+import Draggable from 'react-draggable';
 
 const constraints = {
     width: 870,
@@ -24,7 +25,12 @@ class AddPhoto extends React.Component {
         screenshot: '',
         sticker: {},
         previousPosts: [],
-        loading: true
+        loading: true,
+        stickerPosition: {
+            x: 0,
+            y: 0
+        },
+        stickerPicked: false
     }
 
     constructor(props) {
@@ -125,7 +131,13 @@ class AddPhoto extends React.Component {
         let myInit = {
             body: {
                 creator: this.props.user.info.username,
-                sticker: this.state.sticker,
+                sticker: {
+                    info: this.state.sticker,
+                    position: {
+                        x: this.state.stickerPosition.x,
+                        y: this.state.stickerPosition.y
+                    }
+                },
                 photo: {
                     path: this.state.screenshot,
                     width: this.state.width / 1.8,
@@ -179,8 +191,25 @@ class AddPhoto extends React.Component {
 
         this.setState({
             ...this.state,
-            sticker: sticker
+            sticker: sticker,
+            stickerPicked: true
         })
+
+    }
+
+    handleDrag = (e, ui) => {
+
+        console.log("Event:", e)
+        console.log("UI:",ui)
+
+        this.setState({
+            ...this.state,
+            stickerPosition: {
+                x: ui.x,
+                y: ui.y
+            }
+        })
+
 
     }
 
@@ -191,6 +220,8 @@ class AddPhoto extends React.Component {
             this._getPreviousPosts()
             
         }
+
+        console.log(this.state)
 
         if (this.props.user.isConnected) {
 
@@ -212,7 +243,7 @@ class AddPhoto extends React.Component {
                                     ?
                                         <center>
                                             <div
-                                            style={{position: 'relative', bakgroundColor: 'blue'}}
+                                            style={{position: 'relative', bakgroundColor: 'blue', height: this.state.height / 1.8, width: this.state.width / 1.8}}
                                             >
                                                 <Webcam
                                                 audio={false}
@@ -222,6 +253,17 @@ class AddPhoto extends React.Component {
                                                 width={this.state.width / 1.8}
                                                 videoConstraints={constraints}
                                                 />
+                                                <Draggable
+                                                axis="both"
+                                                onDrag={this.handleDrag}
+                                                bounds={{top: 0, left: -560, right: 560, bottom: 570}}
+                                                >
+                                                    <img
+                                                    alt=""
+                                                    style={{left: 79 + 560, top: 0, height: this.state.sticker.height, width: this.state.sticker.width, position: 'absolute'}}
+                                                    src={this.state.sticker.url}
+                                                    />
+                                                </Draggable>
                                             </div>
                                         </center>
                                     :
@@ -246,7 +288,7 @@ class AddPhoto extends React.Component {
                                                 Take a selfie:
                                                 <br />
                                                 <div
-                                                style={{width: 50, height: 50, backgroundColor: 'red'}}
+                                                style={{width: 50, height: 50, backgroundColor: this.state.stickerPicked ? 'red' : 'lightgray'}}
                                                 onClick={this._capture}
                                                 >
 

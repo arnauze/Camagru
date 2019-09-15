@@ -1,5 +1,9 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import Button from '@material-ui/core/Button'
+import { Auth } from 'aws-amplify'
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
 
 class TopBar extends React.Component {
 
@@ -50,37 +54,68 @@ class TopBar extends React.Component {
 
     }
 
+    _onLogout = () => {
+
+        Auth.signOut({global: true})
+        .then(data => {
+
+            console.log("Successfully called the Auth API:", data)
+
+            let action = {
+                type: "DISCONNECT_USER"
+            }
+            this.props.dispatch(action)
+
+        })
+        .catch(error => {
+
+            console.log("Error calling the Auth API:", error)
+
+        })
+
+    }
+
     render() {
 
         return (
             <header>
                 <center>
-                    <div style={styles.main_division}>
-                        <button
-                        style={styles.button}
-                        onClick={() => this._onButtonPressed('MAIN_PAGE')}
-                        >
-                            Main page
-                        </button>
-                        <button
-                        style={styles.button}
-                        onClick={() => this._onButtonPressed('ADD_PHOTO')}
-                        >
-                            Add a picture
-                        </button>
-                        <button
-                        style={styles.button}
-                        onClick={() => this._onButtonPressed('CONNECTION')}
-                        >
+                    <AppBar position="static" style={styles.main_division}>
+                        <Toolbar>
+                            <Button
+                            onClick={() => this._onButtonPressed('MAIN_PAGE')}
+                            >
+                                Main page
+                            </Button>
+                            <Button
+                            onClick={() => this._onButtonPressed('ADD_PHOTO')}
+                            >
+                                Add a picture
+                            </Button>
+                            <Button
+                            onClick={() => this._onButtonPressed('CONNECTION')}
+                            >
+                                {
+                                    this.props.user.isConnected
+                                    ?
+                                        'My account'
+                                    :
+                                        'Sign in / Sign up'
+                                }
+                            </Button>
                             {
                                 this.props.user.isConnected
                                 ?
-                                    'My account'
+                                    <Button
+                                    onClick={this._onLogout}
+                                    >
+                                        Log out
+                                    </Button>
                                 :
-                                    'Sign in / Sign up'
+                                    null
                             }
-                        </button>
-                    </div> 
+                        </Toolbar>
+                    </AppBar> 
                 </center>
             </header>
 
@@ -93,10 +128,11 @@ class TopBar extends React.Component {
 const styles = {
     main_division: {
         width: '90vw',
-        height: '10vh',
+        height: '5vh',
         marginBottom: 10,
-        flexDirection: 'row',
-        border: '1px solid black'
+        display: 'flex',
+        justifyContent: 'space-evenly',
+        alignItems: 'center'
     },
     button: {
         width: '15vw',
