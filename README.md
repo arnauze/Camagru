@@ -15,16 +15,16 @@ API:
 -/posts
 GET
 POST
-	-/user
-		-/{user_id}
-		GET
-	-/{post_id}
-	DELETE
-		-/social
-			-/comment
-			POST
-			-/like
-			POST
+ -/user
+    -/{user_id}
+    GET
+    -/{post_id}
+    DELETE
+       -/social
+          -/comment
+          POST
+          -/like
+          POST
 
 -/users
 POST
