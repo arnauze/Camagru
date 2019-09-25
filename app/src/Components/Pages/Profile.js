@@ -1,5 +1,5 @@
 import React from 'react'
-import { Auth, API } from 'aws-amplify'
+import { API } from 'aws-amplify'
 import { connect } from 'react-redux'
 
 class Profile extends React.Component {
@@ -11,8 +11,8 @@ class Profile extends React.Component {
         loading: true,
         updating: false,
         first_name: '',
-        last_name: ''
-
+        last_name: '',
+        newUsername: ''
     }
 
     _getUser = () => {
@@ -60,37 +60,6 @@ class Profile extends React.Component {
 
     }
 
-    _signOut = () => {
-
-        // Function called when we click on Logout
-
-        Auth.signOut({global: true})
-        .then(data => {
-
-            console.log("Successfully called the Auth API:", data)
-
-            let action = {
-                type: "DISCONNECT_USER"
-            }
-            this.props.dispatch(action)
-
-            action = {
-                type: 'CHANGE_PAGE',
-                value: {
-                    page: "CONNECTION"
-                }
-            }
-            this.props.dispatch(action)
-
-        })
-        .catch(error => {
-
-            console.log("Error calling the Auth API:", error)
-
-        })
-
-    }
-
     _onClick = () => {
 
         // Function called when the user clicks on the button
@@ -106,7 +75,8 @@ class Profile extends React.Component {
                     user: {
                         ...this.props.user.info,
                         first_name: this.state.first_name.length > 0 ? this.state.first_name : this.props.user.info.first_name,
-                        last_name: this.state.last_name.length > 0 ? this.state.last_name : this.props.user.info.last_name
+                        last_name: this.state.last_name.length > 0 ? this.state.last_name : this.props.user.info.last_name,
+                        newUsername: this.state.newUsername.length > 0 ? this.state.newUsername : this.props.user.info.newUsername
                     }
                 }
             }
@@ -154,6 +124,17 @@ class Profile extends React.Component {
 
     }
 
+    _onUsernameChange = (text) => {
+
+        // Function called when I change the input for username
+
+        this.setState({
+            ...this.state,
+            newUsername: text
+        })
+
+    }
+
     _outputText = (type) => {
 
         // Function called in the render
@@ -162,7 +143,25 @@ class Profile extends React.Component {
         switch(type) {
 
             case 'username':
-                return this.props.user.info.username
+                if (this.state.updating) {
+
+                    return (
+                        <form
+                        style={{marginLeft: 5}}
+                        >
+                            <input onChange={(event) => this._onUsernameChange(event.target.value)} type="text" name="username"></input>
+                        </form>
+                    )
+
+                } else {
+
+                    if (this.props.user.info.newUsername !== 'ex') {
+                        return this.props.user.info.newUsername
+                    } else {
+                        return this.props.user.info.username
+                    }
+
+                }
 
             case 'email':
                 return this.props.user.info.email
@@ -192,6 +191,8 @@ class Profile extends React.Component {
                 } else {
                     return this.props.user.info.last_name
                 }
+            default:
+                return 'error'
 
         }
 
@@ -239,12 +240,6 @@ class Profile extends React.Component {
                                 }
                             </button>
                         </div>
-                        <h5
-                        style={{fontWeight: 'normal', color: 'blue'}}
-                        onClick={this._signOut}
-                        >
-                            Log out
-                        </h5>
                     </div>
                 </div>
             )

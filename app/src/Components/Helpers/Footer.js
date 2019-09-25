@@ -1,5 +1,5 @@
 import React from 'react'
-import { stickers } from '../../../Constants' // I saved the stickers informations in a file at the root of the app directory
+import { stickers } from '../../Constants/Constants' // I saved the stickers informations in a file at the root of the app directory
 
 export default class Footer extends React.Component {
 
@@ -10,7 +10,7 @@ export default class Footer extends React.Component {
     render() {
 
         return (
-            <div style={{width: '90%', height: '23vh', border: '1px solid black', margin: 5, display: 'flex', alignItems: 'center', overflowX: 'scroll'}}>
+            <div style={{width: '99vw', height: '23vh', backgroundColor: '#F2F2F2', margin: 5, marginRight: 10, display: 'flex', alignItems: 'center', overflowX: 'scroll', borderRadius: 5}}>
                 {
                     stickers.map((item, index) => {
 
@@ -24,12 +24,12 @@ export default class Footer extends React.Component {
                                     onClick={() => this.props.onClick(
                                         {
                                             ...item,
-                                            width: (this.props.screenDimensions.width / 13) * item.width,
-                                            height: (this.props.screenDimensions.height / 10) * item.height
+                                            width: item.width,
+                                            height: item.height
                                         }
                                     )}
                                     src={item.url}
-                                    style={{width: (this.props.screenDimensions.width / 13) * item.width, height: (this.props.screenDimensions.height / 10) * item.height}}
+                                    style={{width: item.width, height: item.height}}
                                     alt=''/>
                                 </center>
                             </div>

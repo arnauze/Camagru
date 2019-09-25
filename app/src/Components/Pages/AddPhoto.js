@@ -2,14 +2,15 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { API } from 'aws-amplify'
 import Webcam from "react-webcam"
-import Footer from './Helpers/Footer'
-import SideMenu from './Helpers/SideMenu'
+import Footer from '../Helpers/Footer'
+import SideMenu from '../Helpers/SideMenu'
 import Switch from "react-switch"
-import Draggable from 'react-draggable';
+import Draggable from 'react-draggable'
+import Button from '@material-ui/core/Button'
 
 const constraints = {
-    width: 870,
-    height: 480,
+    width: 1280,
+    height: 720,
     facingMode: "user"
 };
 
@@ -19,8 +20,8 @@ class AddPhoto extends React.Component {
     // If the user is not logged in he can't see this page
 
     state = {
-        width: 0,
-        height: 0,
+        width: 1280,
+        height: 720,
         record: true,
         screenshot: '',
         sticker: {},
@@ -31,12 +32,6 @@ class AddPhoto extends React.Component {
             y: 0
         },
         stickerPicked: false
-    }
-
-    constructor(props) {
-        super(props);
-
-        this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
     }
 
     componentDidMount() {
@@ -58,12 +53,15 @@ class AddPhoto extends React.Component {
 
     }
 
-    updateWindowDimensions() {
+    updateWindowDimensions = () => {
 
         this.setState({
-            width: window.innerWidth,
-            height: window.innerHeight
+            windowWidth: window.innerWidth,
+            windowHeight: window.innerHeight,
+            record: window.innerWidth < 1913 ? false : this.state.record
         });
+
+        
 
     }
 
@@ -140,8 +138,8 @@ class AddPhoto extends React.Component {
                 },
                 photo: {
                     path: this.state.screenshot,
-                    width: this.state.width / 1.8,
-                    height: this.state.height / 1.8
+                    width: this.state.width,
+                    height: this.state.height
                 }
             }
         }
@@ -152,6 +150,7 @@ class AddPhoto extends React.Component {
             alert("You successfully created a new post !")
             
             // Here I put the loading button back to true so I can download the previous posts again
+
             this.setState({
                 ...this.state,
                 loading: true
@@ -170,10 +169,18 @@ class AddPhoto extends React.Component {
 
         // Function called when I the user takes a screenshot with the webcam
 
-        this.setState({
-            ...this.state,
-            screenshot: this._webcam.getScreenshot()
-        }, () => this._addPostToDatabase())
+        if (this.state.stickerPicked) {
+
+            this.setState({
+                ...this.state,
+                screenshot: this._webcam.getScreenshot()
+            }, () => this._addPostToDatabase())
+
+        } else {
+
+            alert("You need to pick a sticker first")
+
+        }
 
     }
 
@@ -197,6 +204,35 @@ class AddPhoto extends React.Component {
 
     }
 
+    onStop = (e, ui) => {
+
+        if (ui.x > 1280 - this.state.sticker.width || ui.y > 720 - this.state.sticker.height
+            || ui.x < 0 || ui.y < 0) {
+
+            this.setState({
+                ...this.state,
+                sticker: {},
+                stickerPosition: {
+                    x: 0,
+                    y: 0
+                },
+                stickerPicked: false
+            })
+
+        } else {
+
+            this.setState({
+                ...this.state,
+                stickerPosition: {
+                    x: ui.x,
+                    y: ui.y
+                }
+            })
+
+        }
+
+    }
+
     handleDrag = (e, ui) => {
 
         console.log("Event:", e)
@@ -210,7 +246,6 @@ class AddPhoto extends React.Component {
             }
         })
 
-
     }
 
     render() {
@@ -221,7 +256,7 @@ class AddPhoto extends React.Component {
             
         }
 
-        console.log(this.state)
+        console.log("ADD PHOTO STATE:", this.state)
 
         if (this.props.user.isConnected) {
 
@@ -229,11 +264,11 @@ class AddPhoto extends React.Component {
 
             return (
                 <div
-                style={{width: '100%'}}
+                style={{width: '99vw'}}
                 >
-                    <div style={{display: 'flex', height: '60vh'}}>
+                    <div style={{display: 'flex'}}>
                         <div
-                        style={{width: '77vw', display: 'flex'}}
+                        style={{width: '77vw', display: 'flex', backgroundColor: 'black', margin: 10, borderRadius: 10}}
                         >
                             <div
                             style={{width: '67vw'}}
@@ -243,24 +278,25 @@ class AddPhoto extends React.Component {
                                     ?
                                         <center>
                                             <div
-                                            style={{position: 'relative', bakgroundColor: 'blue', height: this.state.height / 1.8, width: this.state.width / 1.8}}
+                                            style={{position: 'relative', bakgroundColor: 'blue', height: 720, width: 1280}}
                                             >
                                                 <Webcam
                                                 audio={false}
-                                                height={this.state.height / 1.8}
+                                                height={this.state.height}
                                                 ref={this._setRef}
                                                 screenshotFormat="image/jpeg"
-                                                width={this.state.width / 1.8}
+                                                width={this.state.width}
                                                 videoConstraints={constraints}
                                                 />
                                                 <Draggable
                                                 axis="both"
                                                 onDrag={this.handleDrag}
-                                                bounds={{top: 0, left: -560, right: 560, bottom: 570}}
+                                                onStop={this.onStop}
+                                                position={{x: this.state.stickerPosition.x, y: this.state.stickerPosition.y}}
                                                 >
                                                     <img
                                                     alt=""
-                                                    style={{left: 79 + 560, top: 0, height: this.state.sticker.height, width: this.state.sticker.width, position: 'absolute'}}
+                                                    style={{left: 0, top: 0, height: this.state.sticker.height, width: this.state.sticker.width, position: 'absolute'}}
                                                     src={this.state.sticker.url}
                                                     />
                                                 </Draggable>
@@ -271,7 +307,7 @@ class AddPhoto extends React.Component {
                                 }
                             </div>
                             <div
-                            style={{marginRight: 7, width: '10vw', display: 'flex', flexDirection: 'column', justifyContent: 'center'}}
+                            style={{marginRight: 7, width: '10vw', display: 'flex', flexDirection: 'column', justifyContent: 'center', color: 'white'}}
                             >
                                 <center>
                                     Camera: <br />
@@ -288,7 +324,7 @@ class AddPhoto extends React.Component {
                                                 Take a selfie:
                                                 <br />
                                                 <div
-                                                style={{width: 50, height: 50, backgroundColor: this.state.stickerPicked ? 'red' : 'lightgray'}}
+                                                style={{width: 50, height: 50, borderRadius: 25, backgroundColor: this.state.stickerPicked ? 'red' : 'lightgray'}}
                                                 onClick={this._capture}
                                                 >
 
@@ -323,12 +359,12 @@ class AddPhoto extends React.Component {
                         <p>
                             You need to log in before you can add a media
                         </p>
-                        <h6
+                        <Button
                         onClick={this._onClick}
-                        style={{fontWeight: 'normal', color: 'blue', textDecoration: 'underline'}}
+                        style={{fontWeight: 'normal', color: 'blue'}}
                         >
                             Sign in/Sign up
-                        </h6>
+                        </Button>
                     </center>
                 </React.Fragment>
             )

@@ -1,6 +1,6 @@
 import React from 'react'
-import SignUp from './Helpers/SignUp'
-import SignIn from './Helpers/SignIn'
+import SignUp from '../Helpers/SignUp'
+import SignIn from '../Helpers/SignIn'
 import { API, Auth } from 'aws-amplify'
 import { connect } from 'react-redux'
 
@@ -21,65 +21,91 @@ class Connection extends React.Component {
         confirmationMessage: '',
         confirmationCode: '',
         errorMessage: '',
-        errorLogin: ''
-
+        errorLogin: '',
+        updatePassword: false,
+        newPassword: {}
     }
 
-    _onSubmitSignIn = e => {
+    _onSubmitSignIn = async (e) => {
 
         // Function called when I sumbit the signIn form
 
         e.preventDefault()  // Function to prevent the page from updating  
 
-        // Here I use AWS Cognito to handle the user authentication
+        var apiName = 'Camagru'
+        var path = '/users/find'
+        var myInit = {
+            queryStringParameters: {
+                username: this.state.signIn.username
+            }
+        }
 
-       Auth.signIn(this.state.signIn.username, this.state.signIn.password)
-       .then(data => {
+        this.setState({
+            ...this.state,
+            errorLogin: ''
+        })
 
-            console.log("Successfully called the Auth API:", data)
+        API.get(apiName, path, myInit)
+        .then(response => {
 
-            // If the user successfully signed in then I change the user variable in the global state
-            // Then I change the page variable in the global state
+            console.log("Call to /users/find", response)
 
-            let apiName = 'Camagru'
-            let path = '/users/' + data.username
-            let myInit = {}
+            // Here I use AWS Cognito to handle the user authentication
 
-            API.get(apiName, path, myInit)
+            Auth.signIn(response.username, this.state.signIn.password)
             .then(data => {
 
-                let action = {
-                    type: 'CONNECT_USER',
-                    value: {
-                        user: data
-                    }
-                }
-                this.props.dispatch(action)
+                    console.log("Successfully called the Auth API:", data)
 
-                action = {
-                    type: 'CHANGE_PAGE',
-                    value: {
-                        page: "ADD_PHOTO"
-                    }
-                }
-                this.props.dispatch(action)
+                    // If the user successfully signed in then I change the user variable in the global state
+                    // Then I change the page variable in the global state
+
+                    let apiName = 'Camagru'
+                    let path = '/users/' + data.username
+                    let myInit = {}
+
+                    API.get(apiName, path, myInit)
+                    .then(data => {
+
+                        let action = {
+                            type: 'CONNECT_USER',
+                            value: {
+                                user: data
+                            }
+                        }
+                        this.props.dispatch(action)
+
+                        action = {
+                            type: 'CHANGE_PAGE',
+                            value: {
+                                page: "ADD_PHOTO"
+                            }
+                        }
+                        this.props.dispatch(action)
+
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
 
             })
-            .catch(err => {
-                console.log(err)
+            .catch(error => {
+
+                    console.log("Error calling the Auth API:", error)
+
+                    this.setState({
+                        ...this.state,
+                        errorLogin: error.message
+                    })
+
             })
 
-       })
-       .catch(error => {
+        })
+        .catch(err => {
 
-            console.log("Error calling the Auth API:", error)
+            console.log(err)
 
-            this.setState({
-                ...this.state,
-                errorLogin: error.message
-            })
-
-       })
+        })
 
     }
 
@@ -106,7 +132,8 @@ class Connection extends React.Component {
 
             this.setState({
                 ...this.state,
-                confirmationMessage: "We've sent an email with a confirmation code!"
+                confirmationMessage: "We've sent an email with a confirmation code!",
+                errorMessage: ''
             })
 
         })
@@ -265,11 +292,79 @@ class Connection extends React.Component {
 
     }
 
+    _onForgotPassword = () => {
+
+        Auth.forgotPassword(this.state.signIn.username)
+        .then(data => {
+
+            console.log("DATA:", data)
+            this.setState({
+                ...this.state,
+                updatePassword: true,
+                errorLogin: ''
+            })
+
+        })
+        .catch(err => {
+            console.log(err.message)
+            this.setState({
+                ...this.state,
+                errorLogin: err.message
+            })
+        })
+
+    }
+
+    _onUpdatePassword = (text) => {
+
+        this.setState({
+            ...this.state,
+            newPassword: {
+                ...this.state.newPassword,
+                password: text
+            }
+        })
+
+    }
+
+    _onSubmitUpdatePassword = (e) => {
+
+        e.preventDefault()
+
+        Auth.forgotPasswordSubmit(this.state.signIn.username, this.state.newPassword.code, this.state.newPassword.password)
+        .then(data => {
+
+            alert("Successfully updated your password")
+            this.setState({
+                ...this.state,
+                updatePassword: false,
+                newPassword: {},
+                errorLogin: ''
+            })
+
+
+        })
+        .catch(err => console.log(err));
+
+    }
+
+    _onUpdateCode = (text) => {
+
+        this.setState({
+            ...this.state,
+            newPassword: {
+                ...this.state.newPassword,
+                code: text
+            }
+        })
+
+    }
+
     render() {
 
         return (
             <div
-            style={{flex: 1, backgroundColor: '#A9A9A9'}}
+            style={{flex: 1}}
             >
                 <SignIn
                 onSubmitSignIn={this._onSubmitSignIn}
@@ -278,6 +373,12 @@ class Connection extends React.Component {
                 onChangeEmail={this._onChangeSignInEmail}
                 onChangePassword={this._onChangeSignInPassword}
                 errorMessage={this.state.errorLogin}
+                onForgotPassword={this._onForgotPassword}
+                updatePassword={this.state.updatePassword}
+                newPassword={this.state.newPassword}
+                onUpdatePassword={this._onUpdatePassword}
+                onSubmitUpdatePassword={this._onSubmitUpdatePassword}
+                onUpdateCode={this._onUpdateCode}
                 />
                 <SignUp
                 onSubmitSignUp={this._onSubmitSignUp}

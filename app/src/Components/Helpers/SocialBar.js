@@ -2,6 +2,7 @@ import React from "react"
 import { connect } from "react-redux"
 import { API } from 'aws-amplify'
 import CommentItem from './CommentItem'
+import Button from '@material-ui/core/Button'
 
 class SocialBar extends React.Component {
 
@@ -22,23 +23,29 @@ class SocialBar extends React.Component {
 
         // Function called when a user clicks on Like
 
-        let apiName = 'Camagru'
-        let path = "/posts/" + this.props.post.id + "/social/like"
-        let myInit = {
-            body: {
-                user: this.props.user
+        if (this.props.user.isConnected) {
+
+            let apiName = 'Camagru'
+            let path = "/posts/" + this.props.post.id + "/social/like"
+            let myInit = {
+                body: {
+                    user: this.props.user
+                }
             }
+
+            API.post(apiName, path, myInit)
+            .then(data => {
+
+                this.props.reload()
+                
+            })
+            .catch(err => {
+                console.log(err.message)
+            })
+
+        } else {
+            alert("First you need to log in")
         }
-
-        API.post(apiName, path, myInit)
-        .then(data => {
-
-            this.props.reload()
-            
-        })
-        .catch(err => {
-            console.log(err.message)
-        })
 
     }
 
@@ -158,15 +165,18 @@ class SocialBar extends React.Component {
     render() {
 
         return (
-            <div>
+            <div style={{marginTop: 5, border: '1px solid black', borderRadius: 5, width: this.props.photo.width, backgroundColor: 'white'}}>
                 <div
-                style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly'}}
+                style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', height: '5vh'}}
                 >
                     <div
                     >
                         <center>
-                            <h4
+                            <Button
+                            // variant="contained"
+                            color="primary"
                             onClick={this._handleLikes}
+                            style={{height: '5vh', maxHeight: 35, fontSize: '1.7vh'}}
                             >
                                 {
                                     this.props.post.social.likes.length > 1 
@@ -175,13 +185,18 @@ class SocialBar extends React.Component {
                                     :
                                         this.props.post.social.likes.length + ' LIKE'
                                 }
-                            </h4>
+                            </Button>
                         </center>
                     </div>
-                    <div>
+                    <div
+                    style={{display: 'flex', alignItems: 'center'}}
+                    >
                         <center>
-                            <h4
+                            <Button
+                            // variant="contained"
+                            color="primary"
                             onClick={this.handleComments}
+                            style={{height: '5vh', maxHeight: 35, fontSize: '1.7vh'}}
                             >
                                 {
                                     this.props.post.social.comments.length > 1 
@@ -190,7 +205,7 @@ class SocialBar extends React.Component {
                                     :
                                         this.props.post.social.comments.length + ' COMMENT'
                                 }
-                            </h4>
+                            </Button>
                         </center>
                     </div>
                 </div>

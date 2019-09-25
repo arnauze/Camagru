@@ -30,7 +30,8 @@ export default class Photo extends React.Component {
 
         this.setState({
             width: document.getElementById("division").offsetWidth,
-            height: window.innerHeight
+            windowWidth: window.innerWidth,
+            windowHeight: window.innerHeight
         });
 
     }
@@ -44,35 +45,38 @@ export default class Photo extends React.Component {
         console.log("STICKER IN PHOTO", sticker)
 
         return (
-
             <div
-            style={{display: 'flex', alignItems: 'top', justifyContent: 'center', position: 'relative'}}
+            style={{position: 'relative', height: photo.height, width: photo.width}}
             id="division"
             >
-                <img
-                alt=''
-                src={photo.path}
-                style={{maxWidth: photo.width, maxHeight: photo.height, width: '75vw'}}
-                />
-                <div
-                style={{position: 'absolute', top: sticker.position.y, right: (( this.state.width / 2) - sticker.position.x - 79)}}
-                >
                     <img
                     alt=''
-                    src={sticker.info.url}
-                    style={{width: sticker.info.width, height: sticker.info.height}}
-                    >
-                    </img>
-                </div>
+                    src={photo.path}
+                    style={{width: photo.width, height: photo.height}}
+                    />
+                    <center>
+                        <div
+                        style={{position: 'absolute', top: sticker.position.y, left: sticker.position.x}}
+                        >
+                            <img
+                            alt=''
+                            src={sticker.info.url}
+                            style={{width: sticker.info.width, height: sticker.info.height}}
+                            >
+                            </img>
+                        </div>
+                    </center>
                 {
                     this.props.user.info.username === this.props.post.creator
                     ?
-                        <img
-                        onClick={this.props.onDeleteButtonClicked}
-                        src={require('../../../Images/deleteButton.png')}
-                        style={{width: '3vw', height: '3vh', maxWidth: 40, maxHeight: 40, minHeight: 10, minWidth: 10, position: 'absolute', bottom: 0}}
-                        alt=''
-                        />
+                        <div style={{position: 'absolute', width: '75vw', top: 0, right: 0}}>
+                            <img
+                            onClick={this.props.onDeleteButtonClicked}
+                            src={require('../../Images/deleteButton.png')}
+                            style={{width: '3vw', height: '3vh', maxWidth: 40, maxHeight: 40, minHeight: 10, minWidth: 10, position: 'absolute', top: 0, right: 0}}
+                            alt=''
+                            />
+                        </div>
                     :
                         null
                 }

@@ -56,15 +56,33 @@ class TopBar extends React.Component {
 
     _onLogout = () => {
 
+        // Function called when I click on Log out
+
         Auth.signOut({global: true})
         .then(data => {
 
+            // I sign the user out of Cognito, then I disconnect it of the app by changing the global state
+            // And finally I send the user back to the main page
+
             console.log("Successfully called the Auth API:", data)
+
+            // Disconnecting the user
 
             let action = {
                 type: "DISCONNECT_USER"
             }
             this.props.dispatch(action)
+
+            // Changing the page
+
+            action = {
+                type: 'CHANGE_PAGE',
+                value: {
+                    page: 'MAIN_PAGE'
+                }
+            }
+            this.props.dispatch(action)
+
 
         })
         .catch(error => {
@@ -85,12 +103,20 @@ class TopBar extends React.Component {
                             <Button
                             onClick={() => this._onButtonPressed('MAIN_PAGE')}
                             >
-                                Main page
+                                <img
+                                alt=""
+                                src={require('../Images/homeButton.png')}
+                                style={{height: 30, width: 30}}
+                                />
                             </Button>
                             <Button
                             onClick={() => this._onButtonPressed('ADD_PHOTO')}
                             >
-                                Add a picture
+                                <img
+                                alt=""
+                                src={require('../Images/addPicture.png')}
+                                style={{height: 30, width: 30}}
+                                />
                             </Button>
                             <Button
                             onClick={() => this._onButtonPressed('CONNECTION')}
@@ -98,9 +124,17 @@ class TopBar extends React.Component {
                                 {
                                     this.props.user.isConnected
                                     ?
-                                        'My account'
+                                        <img
+                                        alt=""
+                                        src={require('../Images/profileButton.png')}
+                                        style={{height: 30, width: 30}}
+                                        />
                                     :
-                                        'Sign in / Sign up'
+                                        <img
+                                        alt=""
+                                        src={require('../Images/signIn.png')}
+                                        style={{height: 30, width: 30}}
+                                        />
                                 }
                             </Button>
                             {
@@ -109,7 +143,11 @@ class TopBar extends React.Component {
                                     <Button
                                     onClick={this._onLogout}
                                     >
-                                        Log out
+                                        <img
+                                        alt=""
+                                        src={require('../Images/logout.png')}
+                                        style={{width: 30, height: 30}}
+                                        />
                                     </Button>
                                 :
                                     null
@@ -127,7 +165,7 @@ class TopBar extends React.Component {
 
 const styles = {
     main_division: {
-        width: '90vw',
+        width: '100vw',
         height: '5vh',
         marginBottom: 10,
         display: 'flex',

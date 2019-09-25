@@ -37,19 +37,27 @@ class Post extends React.Component {
 
         return (
             <div
-            style={{margin: 10, backgroundColor: 'white'}}
+            style={{marginBottom: 20, marginTop: 20, backgroundColor: '#F2F2F2'}}
             >
-                <Photo
-                photo={photo}
-                sticker={sticker}
-                user={this.props.user}
-                post={this.props.post}
-                onDeleteButtonClicked={this._onDeleteButtonClicked}
-                />
-                <SocialBar
-                reload={this.props.reload}
-                post={this.props.post}
-                />
+                <div style={{margin: 10}}>
+                    <div
+                    style={{width: photo.width, height: 20, backgroundColor: 'white', margin: 3, border: '0.5px solid black', borderRadius: 5}}
+                    >
+                        <b>{this.props.post.creator}</b> shared a new post
+                    </div>
+                    <Photo
+                    photo={photo}
+                    sticker={sticker}
+                    user={this.props.user}
+                    post={this.props.post}
+                    onDeleteButtonClicked={this._onDeleteButtonClicked}
+                    />
+                    <SocialBar
+                    photo={photo}
+                    reload={this.props.reload}
+                    post={this.props.post}
+                    />
+                </div>
             </div>
         )
 

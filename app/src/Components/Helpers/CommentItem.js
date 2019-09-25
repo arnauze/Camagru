@@ -69,25 +69,29 @@ export default class CommentItem extends React.Component {
 
     _onDeleteMessage = () => {
 
-        let apiName = 'Camagru'
-        let path = '/posts/' + this.props.post.id + '/social/comment'
-        let myInit = {
-            body: {
-                user: this.props.user,
-                message: this.props.comment.message,
-                delete: true
+        if (this.props.user.isConnected) {
+
+            let apiName = 'Camagru'
+            let path = '/posts/' + this.props.post.id + '/social/comment'
+            let myInit = {
+                body: {
+                    user: this.props.user,
+                    message: this.props.comment.message,
+                    delete: true
+                }
             }
+
+            API.post(apiName, path, myInit)
+            .then(response => {
+
+                this.props.reload()
+
+            })
+            .catch(err => {
+                console.log(err.message)
+            })
+
         }
-
-        API.post(apiName, path, myInit)
-        .then(response => {
-
-            this.props.reload()
-
-        })
-        .catch(err => {
-            console.log(err.message)
-        })
 
     }
 
@@ -98,7 +102,7 @@ export default class CommentItem extends React.Component {
 
         return (
             <div
-            style={{width: '30vw', backgroundColor: 'lightgray', margin: 10, position: 'relative'}}
+            style={{width: '30vw', backgroundColor: 'lightgray', margin: 10, position: 'relative', border: '1px solid black', borderRadius: 10}}
             >
                 <center>
                     <div
@@ -120,11 +124,18 @@ export default class CommentItem extends React.Component {
                             {timeDifference.number} {timeDifference.timeframe} ago
                         </b>
                     </div>
-                    <img
-                    src={require('../../../Images/deleteButton.png')}
-                    style={{width: 20, height: 20, position : 'absolute', top: 0, right: 0}}
-                    onClick={this._onDeleteMessage}
-                    />
+                    {
+                        this.props.user.info.username === comment.username
+                        ?
+                            <img
+                            alt=""
+                            src={require('../../Images/deleteButton.png')}
+                            style={{width: 20, height: 20, position : 'absolute', top: 3, right: 3}}
+                            onClick={this._onDeleteMessage}
+                            />
+                        :
+                            null
+                    }
                 </center>
             </div>
         )

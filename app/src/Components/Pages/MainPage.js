@@ -1,6 +1,6 @@
 import React from 'react'
 import { API } from 'aws-amplify'
-import Post from './Helpers/Post'
+import Post from '../Helpers/Post'
 
 export default class MainPage extends React.Component {
 
@@ -8,7 +8,8 @@ export default class MainPage extends React.Component {
 
     state = {
         loading: true,
-        posts: []
+        posts: [],
+        errorMessage: ''
     }
 
     _getPosts = () => {
@@ -22,15 +23,24 @@ export default class MainPage extends React.Component {
         API.get(apiName, path, myInit)
         .then(data => {
 
+            console.log("Return from get posts API:", data)
+
             this.setState({
                 ...this.state,
-                posts: data.Items,
+                posts: data,
                 loading: false
             })
 
         })
         .catch(err => {
             console.log(err.message)
+
+            this.setState({
+                ...this.state,
+                loading: false,
+                errorMessage: 'Error fetching the posts'
+            })
+
         })
 
     }
@@ -61,26 +71,36 @@ export default class MainPage extends React.Component {
             this._getPosts()
         }
 
+        console.log(this.state)
+
         return (
             <div style={styles.main_container}>
-                {
-                    this.state.posts.length > 0
-                    ?
-                        this.state.posts.map((item, index) => {
+                    {
+                        this.state.posts.length > 0 // I check if loaded at least one post
+                        ?
+                            this.state.posts.map((item, index) => { // If I did I output all the posts loaded
 
-                            return (
-                                <Post
-                                key={index}
-                                post={item}
-                                deletePost={this._onDeletePost}
-                                reload={this._reload}
-                                />
-                            )
+                                return (
+                                    <Post
+                                    key={index}
+                                    post={item}
+                                    deletePost={this._onDeletePost}
+                                    reload={this._reload}
+                                    />
+                                )
 
-                        })
-                    :
-                        this.state.loading ? null : <p>There is no post to show for now. Add one by clicking on Add a picture</p>
-                }
+                            })
+                        :
+                            this.state.loading // If there is no post I check if that's because I'm still waiting on my API call response
+                            ?
+                                <p>Loading...</p> // If I'm still loading I output a loading message
+                            :
+                                this.state.errorMessage.length > 0 // If I am not loading I check if there was an error fetching the datas
+                                ?
+                                    <b style={{color: 'red'}}>{this.state.errorMessage}</b> // If there was an error I output the error message
+                                :
+                                    <p>There is no post to show for now. Add one by clicking on Add a picture</p> // If there was no error it means that there is no posts in the database
+                    }
             </div>
         )
 
@@ -92,6 +112,6 @@ const styles = {
     main_container: {
         width: '100%',
         height: '100%',
-        backgroundColor: 'blue'
+        backgroundColor: '#F2F2F2'
     }
 }
