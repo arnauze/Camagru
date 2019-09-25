@@ -10,4 +10,7 @@ I used some of Amazon Web Services to create the backend:
 - API Gateway for the REST API
 - AWS DynamoDB for the database
 
-I used Redux to have a global state in the app
+I used Redux to have a global state in the app.
+
+In this project I had to create my own REST API. The client is sending a message to my API, which calls a Lambda function 
+that will return the data back to the client.
