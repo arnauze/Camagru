@@ -5,10 +5,10 @@ Small Instagram-like social media allowing users to take a photo and create a ph
 The Frontend is in ReactJS and the backend is in Node.js.
 
 We used some of the Amazon Web Services to create the backend:
-	- AWS Cognito for the user authentification
-	- AWS Lambda for all the backend functions
-	- API Gateway for the REST API
-	- AWS DynamoDB for the database
+- AWS Cognito for the user authentification
+- AWS Lambda for all the backend functions
+- API Gateway for the REST API
+- AWS DynamoDB for the database
 
 API:
 
