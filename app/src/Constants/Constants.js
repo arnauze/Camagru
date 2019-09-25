@@ -30,3 +30,4 @@ export const stickers = [
         height: 150
     }
 ];
+

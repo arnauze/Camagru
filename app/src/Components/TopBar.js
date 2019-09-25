@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import Button from '@material-ui/core/Button'
-import { Auth } from 'aws-amplify'
+import { Auth, API } from 'aws-amplify'
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 
