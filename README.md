@@ -1,35 +1,35 @@
 # Camagru
 
-Small Instagram-like social media allowing users to take a photo and create a photo montage with one of the stickers.\n
+Small Instagram-like social media allowing users to take a photo and create a photo montage with one of the stickers.
 
-The Frontend is in ReactJS and the backend is in Node.js.\n
+The Frontend is in ReactJS and the backend is in Node.js.
 
-We used some of the Amazon Web Services to create the backend:\n
-	- AWS Cognito for the user authentification\n
-	- AWS Lambda for all the backend functions\n
-	- API Gateway for the REST API\n
-	- AWS DynamoDB for the database\n
+We used some of the Amazon Web Services to create the backend:
+	- AWS Cognito for the user authentification
+	- AWS Lambda for all the backend functions
+	- API Gateway for the REST API
+	- AWS DynamoDB for the database
 
 API:
 
-/posts\n
-GET\n
-POST\n
-	/user\n
-		/{user_id}\n
-		GET\n
-	/{post_id}\n
-	DELETE\n
-		/social\n
-			/comment\n
-			POST\n
-			/like\n
-			POST\n
+/posts
+GET
+POST
+	/user
+		/{user_id}
+		GET
+	/{post_id}
+	DELETE
+		/social
+			/comment
+			POST
+			/like
+			POST
 
-/users\n
-POST\n
-	/find\n
-	GET\n
-	/{username}\n
-	GET\n
-	PUT\n
+/users
+POST
+	/find
+	GET
+	/{username}
+	GET
+	PUT
