@@ -12,24 +12,24 @@ We used some of the Amazon Web Services to create the backend:
 
 API:
 
-/posts
+-/posts
 GET
 POST
-	/user
-		/{user_id}
+	-/user
+		-/{user_id}
 		GET
-	/{post_id}
+	-/{post_id}
 	DELETE
-		/social
-			/comment
+		-/social
+			-/comment
 			POST
-			/like
+			-/like
 			POST
 
-/users
+-/users
 POST
-	/find
+	-/find
 	GET
-	/{username}
+	-/{username}
 	GET
 	PUT
