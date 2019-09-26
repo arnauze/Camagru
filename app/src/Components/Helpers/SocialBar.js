@@ -84,6 +84,8 @@ class SocialBar extends React.Component {
 
             alert("Successfully added a new comment !")
 
+            console.log("NEW COMMENT ADDED:", response)
+
             this.setState({
                 ...this.state,
                 newComment: ''

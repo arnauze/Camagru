@@ -8,6 +8,8 @@ import Switch from "react-switch"
 import Draggable from 'react-draggable'
 import Button from '@material-ui/core/Button'
 
+const MIN_WIDTH = 1913;
+
 const constraints = {
     width: 1280,
     height: 720,
@@ -58,7 +60,7 @@ class AddPhoto extends React.Component {
         this.setState({
             windowWidth: window.innerWidth,
             windowHeight: window.innerHeight,
-            record: window.innerWidth < 1913 ? false : this.state.record
+            record: window.innerWidth < MIN_WIDTH ? false : this.state.record
         });
 
         
@@ -71,23 +73,27 @@ class AddPhoto extends React.Component {
         // That function is called whenever I change value of loading in the state to true
         // I call my API to get all of a user's posts
 
-        let apiName = 'Camagru'
-        let path = '/posts/user/' + this.props.user.info.username
-        let myInit = {}
+        if (this.props.user.isConnected) {
 
-        API.get(apiName, path, myInit)
-        .then(response => {
+            let apiName = 'Camagru'
+            let path = '/posts/user/' + this.props.user.info.username
+            let myInit = {}
 
-            this.setState({
-                ...this.state,
-                previousPosts: response,
-                loading: false
+            API.get(apiName, path, myInit)
+            .then(response => {
+
+                this.setState({
+                    ...this.state,
+                    previousPosts: response,
+                    loading: false
+                })
+
             })
-
-        })
-        .catch(err => {
-            console.log(err.message)
-        })
+            .catch(err => {
+                console.log(err.message)
+            })
+            
+        }
 
     }
 
@@ -112,10 +118,18 @@ class AddPhoto extends React.Component {
         // Function called whenever I click on the ON/OFF camera button
         // If the user's webcam is activated I unactivate it and opposite
 
-        this.setState({
-            ...this.state,
-            record: this.state.record ? false : true
-        })
+        if (this.state.windowWidth > MIN_WIDTH) {
+
+            this.setState({
+                ...this.state,
+                record: this.state.record ? false : true
+            })
+
+        } else {
+
+            alert("You need to make your window wider before you can turn on the camera")
+
+        }
 
     }
 
@@ -123,6 +137,8 @@ class AddPhoto extends React.Component {
 
         // Function called when a user takes a photo
         // I call my API to add a new post with the screenshot in my database
+
+        alert("You just took a screenshot !")
 
         let apiName = 'Camagru'
         let path = '/posts'
@@ -153,7 +169,9 @@ class AddPhoto extends React.Component {
 
             this.setState({
                 ...this.state,
-                loading: true
+                loading: true,
+                stickerPicked: false,
+                sticker: {}
             })
 
         })

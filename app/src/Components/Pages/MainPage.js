@@ -1,6 +1,7 @@
 import React from 'react'
 import { API } from 'aws-amplify'
 import Post from '../Helpers/Post'
+import Button from '@material-ui/core/Button'
 
 export default class MainPage extends React.Component {
 
@@ -36,7 +37,8 @@ export default class MainPage extends React.Component {
 
         })
         .catch(err => {
-            console.log(err.message)
+
+            console.log("ERROR FROM API CALL:", err)
 
             this.setState({
                 ...this.state,
@@ -86,6 +88,8 @@ export default class MainPage extends React.Component {
                         reload={this._reload}
                         />
                     )
+                } else {
+                    return null
                 }
 
             })
@@ -109,48 +113,48 @@ export default class MainPage extends React.Component {
                         ?
                             // If I did I output the posts for the page
                             <div>
-                                <div style={{display: 'flex', justifyContent: 'center'}}>
-                                    <b
-                                    style={{fontWeight: 'normal', margin: 5, marginRight: 15, color: 'blue'}}
+                                <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                                    <Button
+                                    style={{margin: 5, marginRight: 15, color: 'blue'}}
                                     onClick={() => this.setState({
                                         ...this.state,
                                         page: this.state.page === 1 ? 1 : this.state.page - 1
                                     })}
                                     >
                                         Previous page
-                                    </b>
+                                    </Button>
                                     <b style={{fontWeight: 'normal', margin: 5}}>Page {this.state.page}/{this.state.totalPages}</b>
-                                    <b
-                                    style={{fontWeight: 'normal', margin: 5, marginLeft: 15, color: 'blue'}}
+                                    <Button
+                                    style={{margin: 5, marginLeft: 15, color: 'blue'}}
                                     onClick={() => this.setState({
                                         ...this.state,
                                         page: this.state.page === this.state.totalPages ? this.state.totalPages : this.state.page + 1
                                     })}
                                     >
                                         Next page
-                                    </b>
+                                    </Button>
                                 </div>
                                 {this._outputPosts()}
-                                <div style={{display: 'flex', justifyContent: 'center'}}>
-                                    <b
-                                    style={{fontWeight: 'normal', margin: 5, marginRight: 15, color: 'blue'}}
+                                <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                                    <Button
+                                    style={{margin: 5, marginRight: 15, color: 'blue'}}
                                     onClick={() => this.setState({
                                         ...this.state,
                                         page: this.state.page === 1 ? 1 : this.state.page - 1
                                     })}
                                     >
                                         Previous page
-                                    </b>
+                                    </Button>
                                     <b style={{fontWeight: 'normal', margin: 5}}>Page {this.state.page}/{this.state.totalPages}</b>
-                                    <b
-                                    style={{fontWeight: 'normal', margin: 5, marginLeft: 15, color: 'blue'}}
+                                    <Button
+                                    style={{margin: 5, marginLeft: 15, color: 'blue'}}
                                     onClick={() => this.setState({
                                         ...this.state,
                                         page: this.state.page === this.state.totalPages ? this.state.totalPages : this.state.page + 1
                                     })}
                                     >
                                         Next page
-                                    </b>
+                                    </Button>
                                 </div>
                             </div>
                         :
