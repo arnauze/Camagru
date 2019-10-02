@@ -50,55 +50,66 @@ class Connection extends React.Component {
 
             console.log("Call to /users/find", response)
 
-            // Here I use AWS Cognito to handle the user authentication
+            if (response) {
 
-            Auth.signIn(response.username, this.state.signIn.password)
-            .then(data => {
+                // Here I use AWS Cognito to handle the user authentication
 
-                    console.log("Successfully called the Auth API:", data)
+                Auth.signIn(response.username, this.state.signIn.password)
+                .then(data => {
 
-                    // If the user successfully signed in then I change the user variable in the global state
-                    // Then I change the page variable in the global state
+                        console.log("Successfully called the Auth API:", data)
 
-                    let apiName = 'Camagru'
-                    let path = '/users/' + data.username
-                    let myInit = {}
+                        // If the user successfully signed in then I change the user variable in the global state
+                        // Then I change the page variable in the global state
 
-                    API.get(apiName, path, myInit)
-                    .then(data => {
+                        let apiName = 'Camagru'
+                        let path = '/users/' + data.username
+                        let myInit = {}
 
-                        let action = {
-                            type: 'CONNECT_USER',
-                            value: {
-                                user: data
+                        API.get(apiName, path, myInit)
+                        .then(data => {
+
+                            let action = {
+                                type: 'CONNECT_USER',
+                                value: {
+                                    user: data
+                                }
                             }
-                        }
-                        this.props.dispatch(action)
+                            this.props.dispatch(action)
 
-                        action = {
-                            type: 'CHANGE_PAGE',
-                            value: {
-                                page: "ADD_PHOTO"
+                            action = {
+                                type: 'CHANGE_PAGE',
+                                value: {
+                                    page: "ADD_PHOTO"
+                                }
                             }
-                        }
-                        this.props.dispatch(action)
+                            this.props.dispatch(action)
 
-                    })
-                    .catch(err => {
-                        console.log(err)
-                    })
+                        })
+                        .catch(err => {
+                            console.log(err)
+                        })
 
-            })
-            .catch(error => {
+                })
+                .catch(error => {
 
-                    console.log("Error calling the Auth API:", error)
+                        console.log("Error calling the Auth API:", error)
 
-                    this.setState({
-                        ...this.state,
-                        errorLogin: error.message
-                    })
+                        this.setState({
+                            ...this.state,
+                            errorLogin: error.message
+                        })
 
-            })
+                })
+
+            } else {
+
+                this.setState({
+                    ...this.state,
+                    errorLogin: "No user found"
+                })
+
+            }
 
         })
         .catch(err => {

@@ -7,6 +7,7 @@ import SideMenu from '../Helpers/SideMenu'
 import Switch from "react-switch"
 import Draggable from 'react-draggable'
 import Button from '@material-ui/core/Button'
+import ImageUploader from 'react-images-upload'
 
 const MIN_WIDTH = 1913;
 
@@ -33,7 +34,13 @@ class AddPhoto extends React.Component {
             x: 0,
             y: 0
         },
-        stickerPicked: false
+        stickerPicked: false,
+        uploadedImage: {
+            url: '',
+            width: 0,
+            height: 0
+        },
+        disabled: false
     }
 
     componentDidMount() {
@@ -60,7 +67,7 @@ class AddPhoto extends React.Component {
         this.setState({
             windowWidth: window.innerWidth,
             windowHeight: window.innerHeight,
-            record: window.innerWidth < MIN_WIDTH ? false : this.state.record
+            disabled: window.innerWidth < MIN_WIDTH ? true : false
         });
 
         
@@ -122,7 +129,11 @@ class AddPhoto extends React.Component {
 
             this.setState({
                 ...this.state,
-                record: this.state.record ? false : true
+                record: this.state.record ? false : true,
+                uploadedImage: {
+                    ...this.state.uploadedImage,
+                    url: ''
+                }
             })
 
         } else {
@@ -154,8 +165,8 @@ class AddPhoto extends React.Component {
                 },
                 photo: {
                     path: this.state.screenshot,
-                    width: this.state.width,
-                    height: this.state.height
+                    width: this.state.uploadedImage.width !== 0 ? this.state.uploadedImage.width : this.state.width,
+                    height: this.state.uploadedImage.height !== 0 ? this.state.uploadedImage.height : this.state.height
                 }
             }
         }
@@ -171,7 +182,11 @@ class AddPhoto extends React.Component {
                 ...this.state,
                 loading: true,
                 stickerPicked: false,
-                sticker: {}
+                sticker: {},
+                uploadedImage: {
+                    ...this.state.uploadedImage,
+                    url: ''
+                }
             })
 
         })
@@ -191,7 +206,7 @@ class AddPhoto extends React.Component {
 
             this.setState({
                 ...this.state,
-                screenshot: this._webcam.getScreenshot()
+                screenshot: this.state.uploadedImage.url ? this.state.uploadedImage.url : this._webcam.getScreenshot()
             }, () => this._addPostToDatabase())
 
         } else {
@@ -266,6 +281,44 @@ class AddPhoto extends React.Component {
 
     }
 
+    _onPickImage = (file, url) => {
+
+        console.log("File:", file)
+        console.log("Url:", url)
+
+        this.setState({
+            ...this.state,
+            uploadedImage: {
+                ...this.state.uploadedImage,
+                url: url
+            }
+        })
+
+    }
+
+    _outputCamera = () => {
+
+        return this.state.record
+
+    }
+
+    _onLoad = ({target: img}) => {
+
+        console.log("IMAGE HERE:", img)
+        console.log("Offset height:", img.offsetHeight)
+        console.log("Offset width:", img.offsetWidth)
+
+        this.setState({
+            ...this.state,
+            uploadedImage: {
+                ...this.state.uploadedImage,
+                width: img.offsetWidth,
+                height: img.offsetHeight
+            }
+        })
+
+    }
+
     render() {
 
         if (this.state.loading) {
@@ -292,36 +345,86 @@ class AddPhoto extends React.Component {
                             style={{width: '67vw'}}
                             >
                                 {
-                                    this.state.record
+                                    this._outputCamera()
                                     ?
-                                        <center>
-                                            <div
-                                            style={{position: 'relative', bakgroundColor: 'blue', height: 720, width: 1280}}
-                                            >
-                                                <Webcam
-                                                audio={false}
-                                                height={this.state.height}
-                                                ref={this._setRef}
-                                                screenshotFormat="image/jpeg"
-                                                width={this.state.width}
-                                                videoConstraints={constraints}
-                                                />
-                                                <Draggable
-                                                axis="both"
-                                                onDrag={this.handleDrag}
-                                                onStop={this.onStop}
-                                                position={{x: this.state.stickerPosition.x, y: this.state.stickerPosition.y}}
+                                        this.state.disabled
+                                        ?
+                                            null
+                                        :
+                                            <center>
+                                                <div
+                                                style={{position: 'relative', bakgroundColor: 'blue', height: 720, width: 1280}}
                                                 >
-                                                    <img
-                                                    alt=""
-                                                    style={{left: 0, top: 0, height: this.state.sticker.height, width: this.state.sticker.width, position: 'absolute'}}
-                                                    src={this.state.sticker.url}
+                                                    <Webcam
+                                                    audio={false}
+                                                    height={this.state.height}
+                                                    ref={this._setRef}
+                                                    screenshotFormat="image/jpeg"
+                                                    width={this.state.width}
+                                                    videoConstraints={constraints}
                                                     />
-                                                </Draggable>
-                                            </div>
-                                        </center>
+                                                    <Draggable
+                                                    axis="both"
+                                                    onDrag={this.handleDrag}
+                                                    onStop={this.onStop}
+                                                    position={{x: this.state.stickerPosition.x, y: this.state.stickerPosition.y}}
+                                                    >
+                                                        <img
+                                                        alt=""
+                                                        style={{left: 0, top: 0, height: this.state.sticker.height, width: this.state.sticker.width, position: 'absolute'}}
+                                                        src={this.state.sticker.url}
+                                                        />
+                                                    </Draggable>
+                                                </div>
+                                            </center>
                                     :
-                                        null
+                                        <center>
+                                        {
+                                            this.state.disabled
+                                            ?
+                                                null
+                                            :
+                                                <div
+                                                style={{display: 'flex', alignItems: 'center', justifyContent: 'center', height: 720, maxWidth: 1280, width: 1280, position: 'relative', backgroundColor: this.state.uploadedImage.url ? 'white' : 'black'}}
+                                                >
+                                                    {
+                                                    this.state.uploadedImage.url ?
+                                                        <React.Fragment>
+                                                            <img
+                                                            alt=""
+                                                            onLoad={this._onLoad}
+                                                            src={this.state.uploadedImage.url}
+                                                            style={{maxWidth: 1280, maxHeight: 720}}
+                                                            />
+                                                            <Draggable
+                                                            axis="both"
+                                                            onDrag={this.handleDrag}
+                                                            onStop={this.onStop}
+                                                            position={{x: this.state.stickerPosition.x, y: this.state.stickerPosition.y}}
+                                                            >
+                                                                <img
+                                                                alt=""
+                                                                style={{left: 0, top: 0, height: this.state.sticker.height, width: this.state.sticker.width, position: 'absolute'}}
+                                                                src={this.state.sticker.url}
+                                                                />
+                                                            </Draggable>
+                                                        </React.Fragment>
+                                                    :
+                                                        <div
+                                                        style={{width: 250}}
+                                                        >
+                                                            <ImageUploader
+                                                            withIcon={false}
+                                                            buttonText='Choose images'
+                                                            onChange={this._onPickImage}
+                                                            imgExtension={['.jpeg', '.png']}
+                                                            maxFileSize={5242880}
+                                                            />
+                                                        </div>
+                                                    }
+                                                </div>
+                                            }
+                                        </center>
                                 }
                             </div>
                             <div
@@ -331,26 +434,26 @@ class AddPhoto extends React.Component {
                                     Camera: <br />
 
                                     <Switch
-                                    checked={this.state.record}
+                                    checked={(this.state.record && !this.state.disabled)}
                                     onChange={this._updateCamera}
                                     />
                                     <br />
-                                    {
-                                        this.state.record
-                                        ?
-                                            <div>
-                                                Take a selfie:
-                                                <br />
-                                                <div
-                                                style={{width: 50, height: 50, borderRadius: 25, backgroundColor: this.state.stickerPicked ? 'red' : 'lightgray'}}
-                                                onClick={this._capture}
-                                                >
-
-                                                </div>
-                                            </div>
+                                    <div>
+                                        {
+                                            this.state.record
+                                            ?
+                                                'Take a selfie:'
                                             :
-                                                null
-                                    }
+                                                'Add image'
+                                        }
+                                        <br />
+                                        <div
+                                        style={{width: 50, height: 50, borderRadius: 25, backgroundColor: this.state.stickerPicked ? 'red' : 'lightgray'}}
+                                        onClick={this._capture}
+                                        >
+
+                                        </div>
+                                    </div>
                                 </center>
                             </div>
                         </div>

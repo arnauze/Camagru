@@ -46,13 +46,13 @@ export default class Photo extends React.Component {
 
         return (
             <div
-            style={{position: 'relative', height: photo.height, width: photo.width}}
+            style={{position: 'relative', height: 720, width: 1280, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', backgroundColor: 'white'}}
             id="division"
             >
                     <img
                     alt=''
                     src={photo.path}
-                    style={{width: photo.width, height: photo.height}}
+                    style={{maxHeight: 720, maxWidth: 1280}}
                     />
                     <center>
                         <div

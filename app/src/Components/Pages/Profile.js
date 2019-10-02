@@ -1,6 +1,7 @@
 import React from 'react'
-import { API } from 'aws-amplify'
+import { API, Auth } from 'aws-amplify'
 import { connect } from 'react-redux'
+import Switch from "react-switch"
 
 class Profile extends React.Component {
 
@@ -12,7 +13,40 @@ class Profile extends React.Component {
         updating: false,
         first_name: '',
         last_name: '',
-        newUsername: ''
+        newUsername: '',
+        updatingPassword: false,
+        oldPassword: '',
+        newPassword: ''
+    }
+
+    _onChangePassword = () => {
+
+        Auth.currentAuthenticatedUser()
+        .then(user => {
+            return Auth.changePassword(user, this.state.oldPassword, this.state.newPassword);
+        })
+        .then(data => console.log(data))
+        .catch(err => console.log(err.message));
+
+        this.setState({
+            ...this.state,
+            oldPassword: '',
+            newPassword: ''
+        })
+
+    }
+
+    _onUpdatePassword = () => {
+
+        if (this.state.updatingPassword) {
+            this._onChangePassword()
+        }
+
+        this.setState({
+            ...this.state,
+            updatingPassword: this.state.updatingPassword ? false : true
+        })
+
     }
 
     _getUser = () => {
@@ -135,6 +169,53 @@ class Profile extends React.Component {
 
     }
 
+    _onOldPasswordChange = (text) => {
+
+        this.setState({
+            ...this.state,
+            oldPassword: text
+        })
+
+    }
+
+    _onNewPasswordChange = (text) => {
+
+        this.setState({
+            ...this.state,
+            newPassword: text
+        })
+
+    }
+
+    _onSwitchPressed = () => {
+
+        // CHANGE USER PREFERENCES IN DATABASE
+
+        let apiName = 'Camagru'
+        let path = '/users/' + this.props.user.info.username
+        let myInit = {
+            body: {
+                preferences: {
+                    email: this.props.user.info.preferences.email ? false : true
+                }
+            }
+        }
+
+        API.put(apiName, path, myInit)
+        .then(data => {
+
+            console.log("Data:", data)
+
+            this._getUser()
+
+        })
+        .catch(err => {
+            console.log(err.message)
+        })
+
+
+    }
+
     _outputText = (type) => {
 
         // Function called in the render
@@ -191,6 +272,29 @@ class Profile extends React.Component {
                 } else {
                     return this.props.user.info.last_name
                 }
+            case 'old_password':
+                return (
+                    <form
+                    style={{marginLeft: 5}}
+                    >
+                        <input onChange={(event) => this._onOldPasswordChange(event.target.value)} type="password" name="old_password"></input>
+                    </form>
+                )
+            case 'new_password':
+                return (
+                    <form
+                    style={{marginLeft: 5}}
+                    >
+                        <input onChange={(event) => this._onNewPasswordChange(event.target.value)} type="password" name="new_password"></input>
+                    </form>
+                )
+            case 'preferences':
+                return (
+                    <Switch
+                    checked={this.props.user.info.preferences.email}
+                    onChange={this._onSwitchPressed}
+                    />
+                )
             default:
                 return 'error'
 
@@ -199,6 +303,8 @@ class Profile extends React.Component {
     }
 
     render() {
+
+        console.log(this.state)
 
         if (this.state.loading) {
 
@@ -210,39 +316,65 @@ class Profile extends React.Component {
 
         } else {
 
-            return (
-                <div
-                style={{textAlign: 'center'}}
-                >
+            if (this.props.user.isConnected) {
+
+                return (
                     <div
-                    style={{width: '75vw', backgroundColor: 'lightgray', display: 'inline-block'}}
+                    style={{textAlign: 'center'}}
                     >
                         <div
-                        style={{display: 'flex', flexDirection: 'column', textAlign: 'left', margin: 7}}
+                        style={{width: '75vw', backgroundColor: 'lightgray', display: 'inline-block'}}
                         >
-                            <b style={{fontWeight: 'normal', display: 'flex'}}>Username: {this._outputText("username")}</b>
-                            <br />
-                            <b style={{fontWeight: 'normal', display: 'flex'}}>Email: {this._outputText("email")}</b>
-                            <br />
-                            <b style={{fontWeight: 'normal', display: 'flex'}}>First Name: {this._outputText("first_name")}</b>
-                            <br />
-                            <b style={{fontWeight: 'normal', display: 'flex'}}>Last name: {this._outputText("last_name")}</b>
-                            <button
-                            onClick={this._onClick}
-                            style={{width: 150, height: 30, marginTop: 10}}
+                            <div
+                            style={{display: 'flex', flexDirection: 'column', textAlign: 'left', margin: 7}}
                             >
+                                <b style={{fontWeight: 'normal', display: 'flex'}}>Username: {this._outputText("username")}</b>
+                                <br />
+                                <b style={{fontWeight: 'normal', display: 'flex'}}>Email: {this._outputText("email")}</b>
+                                <br />
+                                <b style={{fontWeight: 'normal', display: 'flex'}}>First Name: {this._outputText("first_name")}</b>
+                                <br />
+                                <b style={{fontWeight: 'normal', display: 'flex'}}>Last name: {this._outputText("last_name")}</b>
+                                <br />
+                                <b style={{fontWeight: 'normal', display: 'flex', alignItems: 'center'}}>Notifications when a user comments your post:   {this._outputText("preferences")}</b>
+                                <button
+                                onClick={this._onClick}
+                                style={{width: 150, height: 30, marginTop: 10}}
+                                >
+                                    {
+                                        this.state.updating
+                                        ?
+                                            'Confirm'
+                                        :
+                                            'Update informations'
+                                    }
+                                </button>
                                 {
-                                    this.state.updating
-                                    ?
-                                        'Confirm'
+                                    this.state.updatingPassword ?
+                                        <React.Fragment>
+                                            <br />
+                                            <b style={{fontWeight: 'normal', display: 'flex'}}>Old password: {this._outputText("old_password")}</b>
+                                            <br />
+                                            <b style={{fontWeight: 'normal', display: 'flex'}}>New password: {this._outputText("new_password")}</b>
+                                            <br />
+                                        </React.Fragment>
                                     :
-                                        'Update informations'
+                                        null
                                 }
-                            </button>
+                                <button
+                                onClick={this._onUpdatePassword}
+                                style={{width: 150, height: 30, marginTop: 10}}
+                                >
+                                    Update password
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            )
+                )
+
+            } else {
+                return null
+            }
 
         }
 

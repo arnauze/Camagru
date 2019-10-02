@@ -26,12 +26,14 @@ export default class SideMenu extends React.Component {
                                         console.log("Item in Side menu:", item)
 
                                         return (
-                                            <div style={{width: item.photo.width / 3, height: item.photo.height / 3, position: 'relative', margin: 5}}>
+                                            <div
+                                            style={{width: 1280 / 3, height: 240, position: 'relative', margin: 5, backgroundColor: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}
+                                            key={index}
+                                            >
                                                 <img
                                                 alt = ""
                                                 src={item.photo.path}
-                                                style={{width: item.photo.width / 3, height: item.photo.height / 3}}
-                                                key={index}
+                                                style={{maxWidth: item.photo.width / 3, maxHeight: item.photo.height / 3}}
                                                 />
                                                 <img
                                                 alt=""

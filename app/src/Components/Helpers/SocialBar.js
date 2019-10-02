@@ -66,9 +66,9 @@ class SocialBar extends React.Component {
 
         e.preventDefault()
 
-        let apiName = 'Camagru'
-        let path = "/posts/" + this.props.post.id + "/social/comment"
-        let myInit = {
+        var apiName = 'Camagru'
+        var path = "/posts/" + this.props.post.id + "/social/comment"
+        var myInit = {
             body: {
                 user: this.props.user,
                 comment: this.state.newComment
@@ -83,6 +83,14 @@ class SocialBar extends React.Component {
             // and finally I reload the posts
 
             alert("Successfully added a new comment !")
+
+            if (this.props.user.info.preferences.email) {
+
+                API.post(apiName, '/sendemail', { body: { username: this.props.user.info.username, email: this.props.user.info.email } })
+                .then(data => console.log("SUCCESS SENDING EMAIL:", data))
+                .catch(err => console.log("ERROR SENDING EMAIL:", err))
+                
+            }
 
             console.log("NEW COMMENT ADDED:", response)
 
@@ -167,7 +175,7 @@ class SocialBar extends React.Component {
     render() {
 
         return (
-            <div style={{marginTop: 5, border: '1px solid black', borderRadius: 5, width: this.props.photo.width, backgroundColor: 'white'}}>
+            <div style={{marginTop: 5, border: '1px solid black', borderRadius: 5, width: 1280, backgroundColor: 'white'}}>
                 <div
                 style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', height: '5vh'}}
                 >
