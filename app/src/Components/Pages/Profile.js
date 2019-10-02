@@ -16,17 +16,26 @@ class Profile extends React.Component {
         newUsername: '',
         updatingPassword: false,
         oldPassword: '',
-        newPassword: ''
+        newPassword: '',
+        email: ''
     }
 
     _onChangePassword = () => {
 
+        // Function called when the user wants to change his password
+
         Auth.currentAuthenticatedUser()
         .then(user => {
+
+            // Here I need to get the currentAuthenticatedUser first because the 
+            // changePassword function requires a token (var user) to work
+
             return Auth.changePassword(user, this.state.oldPassword, this.state.newPassword);
         })
         .then(data => console.log(data))
         .catch(err => console.log(err.message));
+
+        // Setting the oldPassword and newPassword back to blank
 
         this.setState({
             ...this.state,
@@ -38,8 +47,14 @@ class Profile extends React.Component {
 
     _onUpdatePassword = () => {
 
-        if (this.state.updatingPassword) {
+        // Function called when the user clicks on the Update password buttom
+
+        if (this.state.updatingPassword && this.state.oldPassword.length > 0 && this.state.newPassword.length > 0) {
+
+            // If the user was updating his password, and the length of the old and new password is greater than 0 then I update the password in the database
+
             this._onChangePassword()
+
         }
 
         this.setState({
@@ -110,7 +125,8 @@ class Profile extends React.Component {
                         ...this.props.user.info,
                         first_name: this.state.first_name.length > 0 ? this.state.first_name : this.props.user.info.first_name,
                         last_name: this.state.last_name.length > 0 ? this.state.last_name : this.props.user.info.last_name,
-                        newUsername: this.state.newUsername.length > 0 ? this.state.newUsername : this.props.user.info.newUsername
+                        newUsername: this.state.newUsername.length > 0 ? this.state.newUsername : this.props.user.info.newUsername,
+                        email: this.state.email.length > 0 ? this.state.email : this.props.user.info.email
                     }
                 }
             }
@@ -171,6 +187,8 @@ class Profile extends React.Component {
 
     _onOldPasswordChange = (text) => {
 
+        // Function called when I change the input for oldPassword
+
         this.setState({
             ...this.state,
             oldPassword: text
@@ -180,6 +198,8 @@ class Profile extends React.Component {
 
     _onNewPasswordChange = (text) => {
 
+        // Function called when I change the input for newPassword
+
         this.setState({
             ...this.state,
             newPassword: text
@@ -187,9 +207,20 @@ class Profile extends React.Component {
 
     }
 
+    _onEmailChange = (text) => {
+
+        // Function called when I change the input for email
+
+        this.setState({
+            ...this.state,
+            email: text
+        })
+
+    }
+
     _onSwitchPressed = () => {
 
-        // CHANGE USER PREFERENCES IN DATABASE
+        // Function called when the user changes its preferences (email notifications)
 
         let apiName = 'Camagru'
         let path = '/users/' + this.props.user.info.username
@@ -245,7 +276,17 @@ class Profile extends React.Component {
                 }
 
             case 'email':
-                return this.props.user.info.email
+                if (this.state.updating) {
+                    return (
+                        <form
+                        style={{marginLeft: 5}}
+                        >
+                            <input onChange={(event) => this._onEmailChange(event.target.value)} type="text" name="email"></input>
+                        </form>
+                    )
+                } else {
+                    return this.props.user.info.email
+                }
 
             case 'first_name':
                 if (this.state.updating) {
@@ -303,8 +344,6 @@ class Profile extends React.Component {
     }
 
     render() {
-
-        console.log(this.state)
 
         if (this.state.loading) {
 
