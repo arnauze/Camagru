@@ -6,7 +6,7 @@
     "@material-ui/core": "^4.4.2",
     "amplify-cli": "^1.0.0",
     "aws-amplify": "^1.1.38",
-    "aws-sdk": "^2.528.0",
+    "aws-sdk": "^2.814.0",
     "nodemailer": "^6.3.0",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
